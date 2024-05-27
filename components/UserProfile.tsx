@@ -10,8 +10,11 @@ import {
 import { Button } from "./ui/button";
 import { CircleUser } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "@/providers/session-provider";
 
 function UserProfile() {
+  const { user } = useSession();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -25,10 +28,10 @@ function UserProfile() {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           {/* TODO: when auth fix */}
-          {true ? (
-            <Link href="/sign-out">Wyloguj się</Link>
+          {user?.id ? (
+            <Link href="/logout">Wyloguj się</Link>
           ) : (
-            <Link href="sign-in">Zaloguj się</Link>
+            <Link href="/login">Zaloguj się</Link>
           )}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
