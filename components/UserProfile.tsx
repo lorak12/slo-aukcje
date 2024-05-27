@@ -10,11 +10,8 @@ import {
 import { Button } from "./ui/button";
 import { CircleUser } from "lucide-react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 
 function UserProfile() {
-  const session = useSession();
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -27,7 +24,8 @@ function UserProfile() {
         <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          {session.data?.user?.id ? (
+          {/* TODO: when auth fix */}
+          {true ? (
             <Link href="/sign-out">Wyloguj się</Link>
           ) : (
             <Link href="sign-in">Zaloguj się</Link>

@@ -1,7 +1,9 @@
-import React from "react";
+import { getProducts } from "@/actions/productActions";
+import DashboardClient from "./DashboardClient";
 
-function Page() {
-  return <div>Page</div>;
+async function Page() {
+  const products = await getProducts();
+  return <DashboardClient products={products} />;
 }
 
 export default Page;

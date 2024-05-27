@@ -1,6 +1,9 @@
 "use server";
 import prisma from "@/lib/prisma";
-import { productFormSchema } from "@/schemas/productFormSchema";
+import {
+  productFormSchema,
+  productFormSchemaFull,
+} from "@/schemas/productFormSchema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -58,4 +61,80 @@ export async function deleteProduct(id: string) {
       where: { id: id },
     });
   });
+}
+
+export async function getVisibleProduct() {
+  const product = await prisma.product.findFirst({
+    where: {
+      isVisible: true,
+    },
+  });
+  revalidatePath("/dashboard");
+  return product;
+}
+
+export async function updateProduct(
+  values: z.infer<typeof productFormSchemaFull>,
+  id: string
+) {
+  if (!id) {
+    throw new Error("No product id provided");
+  }
+
+  const validation = productFormSchemaFull.safeParse(values);
+
+  if (!validation.success) {
+    throw new Error(validation.error.message);
+  }
+
+  await prisma.product.update({
+    where: { id: id },
+    data: {
+      name: values.name,
+      startingPrice: values.startingPrice,
+      endingPrice: values.endingPrice,
+      isVisible: values.isVisible,
+      buyer: values.buyer,
+      status: values.status,
+    },
+  });
+  revalidatePath("/dashboard");
+}
+
+export async function enableProductVisibility(id: string) {
+  if (!id) {
+    throw new Error("No product id provided");
+  }
+  await prisma.product.updateMany({
+    where: {
+      isVisible: true,
+    },
+    data: {
+      isVisible: false,
+    },
+  });
+
+  await prisma.product.update({
+    where: { id: id },
+    data: {
+      isVisible: true,
+      status: "inProgress",
+    },
+  });
+  revalidatePath("/");
+}
+export async function disableProductVisibility(id: string) {
+  if (!id) {
+    throw new Error("No product id provided");
+  }
+  await prisma.product.updateMany({
+    where: {
+      isVisible: true,
+    },
+    data: {
+      isVisible: false,
+      status: "ended",
+    },
+  });
+  revalidatePath("/");
 }

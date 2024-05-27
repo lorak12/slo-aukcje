@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Row } from "@tanstack/react-table";
 import { Product } from "./columns";
+import Link from "next/link";
 
 function CellActions({ row }: { row: Row<Product> }) {
   const product = row;
@@ -44,9 +45,14 @@ function CellActions({ row }: { row: Row<Product> }) {
           Kopiuj ID produktu
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="gap-2">
-          <Edit className="w-4 h-4" />
-          Edytuj produkt
+        <DropdownMenuItem>
+          <Link
+            href={`/dashboard/produkty/${product.original.id}`}
+            className="gap-2 flex items-center"
+          >
+            <Edit className="w-4 h-4" />
+            Edytuj produkt
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <AlertDialog>

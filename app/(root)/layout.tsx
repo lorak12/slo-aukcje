@@ -8,15 +8,8 @@ export default function RootLayout({
 }>) {
   return (
     <>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <Navbar />
-        {children}
-      </ThemeProvider>
+      <Navbar />
+      {children}
     </>
   );
 }

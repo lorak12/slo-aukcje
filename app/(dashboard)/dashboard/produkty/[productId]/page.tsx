@@ -1,10 +1,13 @@
 import React from "react";
 import { ProductForm } from "./ProductForm";
+import { getProduct } from "@/actions/productActions";
 
-function Page() {
+async function Page({ params }: { params: { productId: string } }) {
+  const product = await getProduct(params.productId);
+
   return (
     <div>
-      <ProductForm />
+      <ProductForm initialData={product} />
     </div>
   );
 }

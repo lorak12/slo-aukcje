@@ -1,3 +1,15 @@
+import { getBids } from "@/actions/bidsActions";
+import { getVisibleProduct } from "@/actions/productActions";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 import {
   Table,
   TableBody,
@@ -6,66 +18,47 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { BidForm } from "./BidForm";
+import { formatPrice } from "@/lib/utils";
 
-export default function Home() {
-  const invoices = [
-    {
-      invoice: "INV001",
-      paymentStatus: "Paid",
-      totalAmount: "$250.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV002",
-      paymentStatus: "Pending",
-      totalAmount: "$150.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV003",
-      paymentStatus: "Unpaid",
-      totalAmount: "$350.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV004",
-      paymentStatus: "Paid",
-      totalAmount: "$450.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV005",
-      paymentStatus: "Paid",
-      totalAmount: "$550.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV006",
-      paymentStatus: "Pending",
-      totalAmount: "$200.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV007",
-      paymentStatus: "Unpaid",
-      totalAmount: "$300.00",
-      paymentMethod: "Credit Card",
-    },
-  ];
+export default async function Home() {
+  const product = await getVisibleProduct();
+  if (!product) {
+    return (
+      <main className="m-12 flex items-center justify-center min-h-[calc(100vh-200px)]">
+        <h1>Brak aktywnego produktu...</h1>
+      </main>
+    );
+  }
+
+  const bids = await getBids(product.id);
 
   return (
-    <main className="grid grid-cols-2 m-12 min-h-[calc(100vh-200px)] gap-8">
+    <main className="grid grid-cols-2 m-12 min-h-[calc(100vh-200px)] gap-8 mt-16">
       <section className="flex flex-col gap-6">
-        <h1>
-          Nieprzygotowanie Lorem ipsum dolor sit amet consectetur adipisicing
-          elit. Eligendi natus voluptatem.
-        </h1>
-        <h2>Cena wywoławcza: 150zł</h2>
-        <h2>Minimalna wartość przebicia: 100zł</h2>
+        <h1>{product.name}</h1>
+        <h2>Cena wywoławcza: {formatPrice(product.startingPrice)}</h2>
+        <div>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button>Licytuj</Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+              <SheetHeader>
+                <SheetTitle>Podbij stawkę</SheetTitle>
+                <SheetDescription>
+                  Podaj nową kwotę którą jesteś wstanie zapłacić
+                </SheetDescription>
+              </SheetHeader>
+              <div className="grid gap-4 py-4">
+                <BidForm productId={product.id} />
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </section>
-      <section className="flex justify-center items-center flex-col">
+      <section className="flex  items-center flex-col">
         <div className="border p-4 rounded-xl w-[500px] h-fit scale-150 flex flex-col items-center justify-center">
-          <h2>Aktualnie 2C daje 2500zł</h2>
           <Table className="max-w-[500px]">
             <TableHeader>
               <TableRow>
@@ -74,13 +67,11 @@ export default function Home() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {invoices.map((invoice) => (
-                <TableRow key={invoice.invoice}>
-                  <TableCell className="font-medium">
-                    {invoice.invoice}
-                  </TableCell>
+              {bids.map((bid) => (
+                <TableRow key={bid.id}>
+                  <TableCell className="font-medium">{bid.bidder}</TableCell>
                   <TableCell className="text-right">
-                    {invoice.totalAmount}
+                    {formatPrice(bid.price)}
                   </TableCell>
                 </TableRow>
               ))}
