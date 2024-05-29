@@ -3,6 +3,7 @@ import DashboardClient from "./DashboardClient";
 
 async function Page() {
   const products = await getProducts();
+
   return <DashboardClient products={products} />;
 }
 

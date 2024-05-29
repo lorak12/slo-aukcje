@@ -1,13 +1,12 @@
 import { getVisibleProduct } from "@/actions/productActions";
 import { ReactNode } from "react";
 import LayoutNavbar from "./LayoutNavbar";
-import { validateRequest } from "@/auth";
 import { redirect } from "next/navigation";
+import { checkRole } from "@/lib/roles";
 
 async function DashboardLayout({ children }: { children: ReactNode }) {
-  const { user } = await validateRequest();
-  if (!user) {
-    return redirect("/login");
+  if (!checkRole("admin")) {
+    redirect("/");
   }
 
   const product = await getVisibleProduct();

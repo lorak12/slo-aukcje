@@ -33,20 +33,3 @@ model Bid {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-// TODO: add google oAuth and role based access to the dashboard
-model User {
-  id       String    @id
-  sessions Session[]
-
-  //github OAuth
-  github_id Int    @unique
-  username  String
-}
-
-model Session {
-  id        String   @id
-  userId    String
-  expiresAt DateTime
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
-}
